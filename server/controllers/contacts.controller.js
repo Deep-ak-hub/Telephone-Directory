@@ -1,11 +1,18 @@
-const Contact = require("./contacts.model");
+const Contact = require("../models/contacts.model");
 
 class ContactsController {
   createContact = async (req, res, next) => {
     try {
       const { name, phone, email, address } = req.body;
 
-      const newContact = await Contact.create({ name, phone, email, address });
+      const newContact = await Contact.create({
+        name,
+        phone,
+        email,
+        address,
+        isPotential: isPotential || false,
+      });
+
       res.json({
         data: newContact,
         message: "Contact added successfully",
@@ -18,6 +25,13 @@ class ContactsController {
 
   getAllContactsList = async (req, res, next) => {
     try {
+      const { isPotential } = req.query;
+
+      const filter = {};
+      if (!isPotential) {
+        filter.isPotential = isPotential === "true";
+      }
+
       const contacts = await Contact.find();
       res.json({
         data: contacts,
@@ -35,6 +49,13 @@ class ContactsController {
       const updated = await Contact.findByIdAndUpdate(id, req, body, {
         new: true,
       });
+
+      if (!updated) {
+        return res
+          .status(404)
+          .json({ message: "Contacts not found", status: "FAIL" });
+      }
+
       res.json({
         data: updated,
         message: "Contact updated successfully",
@@ -48,7 +69,14 @@ class ContactsController {
   deleteContact = async (req, res, next) => {
     try {
       const { id } = req.params;
-      await Contact.findByIdAndDelete(id);
+      const deleted = await Contact.findByIdAndDelete(id);
+
+      if (!deleted) {
+        return res
+          .status(404)
+          .json({ message: "Contacts not found", status: "FAIL" });
+      }
+
       res.json({
         message: "Contact deleted successfully",
         status: "OK",
@@ -62,6 +90,7 @@ class ContactsController {
     try {
       const { name } = req.query;
       const results = await Contact.find({ name: new RegExp(name, "i") });
+
       res.json({
         data: results,
         message: "Contact fetched successfully",
@@ -80,6 +109,13 @@ class ContactsController {
         { isPotential: true },
         { new: true }
       );
+
+      if (!updated) {
+        return res
+          .status(404)
+          .json({ message: "Contact not found", status: "FAIL" });
+      }
+
       res.json({
         data: updated,
         message: "Contact marked as potential successfully",

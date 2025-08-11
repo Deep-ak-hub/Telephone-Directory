@@ -6,7 +6,8 @@ const contactSchema = new mongoose.Schema({
     phone: {type: String, required: true},
     email: {type: String, requird: true},
     address: {type: String, requird: true},
-    isPotential: {type: Boolean, default: false}
+    isPotential: {type: Boolean, default: false},
+    createdAt: {type: Date, default: Date.now}
 })
 
 const Contact = mongoose.model('Contact', contactSchema)

@@ -1,5 +1,5 @@
 const contactsRouter = require("express").Router()
-const contactsController = require("./contacts.controller")
+const contactsController = require("../controllers/contacts.controller")
 
 contactsRouter.post('/createContact', contactsController.createContact)
 contactsRouter.get('/contactList', contactsController.getAllContactsList)
