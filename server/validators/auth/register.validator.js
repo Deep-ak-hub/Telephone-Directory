@@ -1,14 +1,13 @@
 const Joi = require("joi");
-const { UserRoles, Gender } = require("../config/constants");
-
-const RoleExp = /^(customer|seller)$/;
-const GenderExp = /^(male|female|other)$/;
-const PasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[\W_-]).{8,25}/;
+const { UserRoles, Gender } = require("../../config/constants");
+const { PasswordRegex, RoleExp, GenderExp, PhoneRegex } = require("../../utils/regex");
 
 const RegisterDTO = Joi.object({
   name: Joi.string().min(2).max(50).required(),
   email: Joi.string().email().required(),
-  phone: Joi.string().max(21).allow(null, "").optional().default(null),
+  phone: Joi.string().regex(PhoneRegex).allow(null, "").optional().default(null).messages({
+    "string.pattern.base": "Phone must be a valid number"
+  }),
   password: Joi.string().regex(PasswordRegex).required().messages({
     "string.empty": "Password cannot be null",
     "string.pattern.base":

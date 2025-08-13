@@ -3,13 +3,14 @@ const Contact = require("../models/contacts.model");
 class ContactsController {
   createContact = async (req, res, next) => {
     try {
-      const { name, phone, email, address } = req.body;
+      const { name, phone, email, address, dob} = req.body;
 
       const newContact = await Contact.create({
         name,
         phone,
         email,
         address,
+        dob,
         isPotential: isPotential || false,
       });
 

@@ -18,6 +18,8 @@ const validateBodyData = (schema) => {
         
         if(exception.details && exception.details.length) {
             exception.details.map((error) => {
+              console.log(error);
+              
                 let field = error.path.pop()
                 errorBag[field] = error.message
             })
