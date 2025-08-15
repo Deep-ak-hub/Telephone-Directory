@@ -10,4 +10,4 @@ const LoginDTO = Joi.object({
     })
 })
 
-module.exports = LoginDTO
+module.exports = {LoginDTO}

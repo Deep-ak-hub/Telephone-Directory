@@ -23,4 +23,4 @@ const RegisterDTO = Joi.object({
   address: Joi.string().allow(null, "").optional().default(null),
 });
 
-module.exports = RegisterDTO;
+module.exports = {RegisterDTO};

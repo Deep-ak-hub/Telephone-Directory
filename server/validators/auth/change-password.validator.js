@@ -16,4 +16,4 @@ const ChangePasswordDTO = Joi.object({
     })
 })
 
-module.exports = ChangePasswordDTO
+module.exports = {ChangePasswordDTO}

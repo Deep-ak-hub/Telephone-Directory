@@ -1,21 +1,34 @@
 const authRouter = require("express").Router()
+
 const authController = require("../controllers/auth.controller")
 const loginCheck = require("../middleware/auth.middleware")
 const validateBodyData = require("../middleware/validator.middleware")
-const RegisterDTO = require("../validators/auth/register.validator")
-const LoginDTO = require("../validators/auth/login.validator")
-const ChangePasswordDTO = require("../validators/auth/change-password.validator")
+
+const {RegisterDTO} = require("../validators/auth/register.validator")
+const {LoginDTO} = require("../validators/auth/login.validator")
+const {ChangePasswordDTO} = require("../validators/auth/change-password.validator")
 const { resetPasswordDTO } = require("../validators/auth/reset-password.validator")
 const { forgotPasswordDTO } = require("../validators/auth/forgot-password.validator")
+const {DeactivateAccountDTO} = require("../validators/auth/deactivate-account.validator")
+const { RefreshTokenDTO } = require("../validators/auth/refresh-token.validator")
+const { UpdateProfileDTO } = require("../validators/auth/update-profile.validator")
 
 authRouter.post("/register", validateBodyData(RegisterDTO) ,authController.registerUser)
-authRouter.get("/activate/:token", authController.activateUserByToken)
 authRouter.post("/login", validateBodyData(LoginDTO) ,authController.userLogin)
-authRouter.post("/forgotPassword", validateBodyData(forgotPasswordDTO) ,validateBodyData(ChangePasswordDTO) ,authController.userForgetPassword)
-authRouter.put("/resetPassword", validateBodyData(resetPasswordDTO) ,authController.userResetPassword)
 
-authRouter.get('/profile', loginCheck(['admin']) ,authController.getUserProfile)
-authRouter.put('/updateProfile', loginCheck() ,authController.updateUserProfile)
+authRouter.post("/password/forget", validateBodyData(forgotPasswordDTO) ,authController.userForgetPassword)
+authRouter.patch("/password/reset", validateBodyData(resetPasswordDTO) ,authController.userResetPassword)
+authRouter.patch("/password/change", validateBodyData(ChangePasswordDTO), authController.changePassword)
+
+authRouter.patch("/account/deactivate", validateBodyData(DeactivateAccountDTO), authController.deactivateAccount)
+
+authRouter.get("/activate/:token", authController.activateUserByToken)
+
+
+authRouter.get('/me', loginCheck(['admin']) ,authController.getUserProfile)
+authRouter.patch('/profile/update', loginCheck() , validateBodyData(UpdateProfileDTO), authController.updateUserProfile)
+
+authRouter.post("/token/refresh", validateBodyData(RefreshTokenDTO) ,authController.refreshToken)
 
 authRouter.post('/logout', authController.logoutUserAccount)
 
