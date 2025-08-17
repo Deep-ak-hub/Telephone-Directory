@@ -12,8 +12,9 @@ const { forgotPasswordDTO } = require("../validators/auth/forgot-password.valida
 const {DeactivateAccountDTO} = require("../validators/auth/deactivate-account.validator")
 const { RefreshTokenDTO } = require("../validators/auth/refresh-token.validator")
 const { UpdateProfileDTO } = require("../validators/auth/update-profile.validator")
+const uploader = require("../middleware/uploader.middleware")
 
-authRouter.post("/register", validateBodyData(RegisterDTO) ,authController.registerUser)
+authRouter.post("/register", uploader().single('image') ,validateBodyData(RegisterDTO) ,authController.registerUser)
 authRouter.post("/login", validateBodyData(LoginDTO) ,authController.userLogin)
 
 authRouter.post("/password/forget", validateBodyData(forgotPasswordDTO) ,authController.userForgetPassword)
@@ -26,7 +27,7 @@ authRouter.get("/activate/:token", authController.activateUserByToken)
 
 
 authRouter.get('/me', loginCheck(['admin']) ,authController.getUserProfile)
-authRouter.patch('/profile/update', loginCheck() , validateBodyData(UpdateProfileDTO), authController.updateUserProfile)
+authRouter.patch('/profile/update', loginCheck() , uploader().single('image') ,validateBodyData(UpdateProfileDTO), authController.updateUserProfile)
 
 authRouter.post("/token/refresh", validateBodyData(RefreshTokenDTO) ,authController.refreshToken)
 
