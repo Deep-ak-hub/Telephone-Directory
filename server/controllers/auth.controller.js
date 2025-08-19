@@ -1,11 +1,34 @@
+const { cloudinaryService } = require("../services/cloudinary.service");
+const bcrypt = require("bcryptjs");
+const randomStringGenerator = require("../utils/randomStringGenerator");
+const { createDate } = require("../utils/create-date");
+
 class AuthController {
-  registerUser = (req, res, next) => {
-    const data = req.body;
-    res.json({
-      data: { data },
-      message: "Your account has been successfully registered",
-      status: "OK",
-    });
+  registerUser = async (req, res, next) => {
+    try {
+      const data = req.body;
+      const file = req.file;
+      data.image = await cloudinaryService.singleFileUpload(file.path);
+      
+      // bluefish algorithm
+      // const salt = bcrypt.genSaltSync(12)
+      // data.password = bcrypt.hashSync(data.password, salt)
+      data.password = bcrypt.hashSync(data.password, 12)
+
+      // activation process plan
+      data.activationToken = randomStringGenerator()
+      data.expiryTime  = createDate(new Date(), 1)
+
+      data.status = 'inactive'
+
+      res.json({
+        data: data,
+        message: "Your account has been successfully registered",
+        status: "OK",
+      });
+    } catch (exception) {
+      next(exception);
+    }
   };
 
   activateUserByToken = (req, res, next) => {
